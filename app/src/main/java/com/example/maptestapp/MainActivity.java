@@ -57,15 +57,18 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                 Manifest.permission.ACCESS_FINE_LOCATION);
 
         int permission2 = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.INTERNET);
+                Manifest.permission.ACCESS_COARSE_LOCATION);
+
+        int permission3 = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION);
 
         // 권한이 열려있는지 확인
-        if (permission == PackageManager.PERMISSION_DENIED || permission2 == PackageManager.PERMISSION_DENIED) {
+        if (permission == PackageManager.PERMISSION_DENIED || permission2 == PackageManager.PERMISSION_DENIED || permission3 == PackageManager.PERMISSION_DENIED) {
             // 마쉬멜로우 이상버전부터 권한을 물어본다
             if (VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 // 권한 체크(READ_PHONE_STATE의 requestCode를 1000으로 세팅
                 requestPermissions(
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET},
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION},
                         1000);
             }
             return;
@@ -79,74 +82,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         mapView.setMapViewEventListener(this);
         mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
 
-        final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-
-
-            if ( Build.VERSION.SDK_INT >= 23 &&
-                    ContextCompat.checkSelfPermission( getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
-                ActivityCompat.requestPermissions( MainActivity.this, new String[] {  android.Manifest.permission.ACCESS_FINE_LOCATION  },
-                        0 );
-            }
-            else{
-
-                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                        1000,
-                        1,
-                        gpsLocationListener);
-
-            }
-
-
-
     }
-
-    final LocationListener gpsLocationListener = new LocationListener() {
-        public void onLocationChanged(Location location) {
-
-            MapPolyline polyline = new MapPolyline();
-            polyline.setTag(1000);
-            polyline.setLineColor(Color.argb(128, 255, 51, 0)); // Polyline 컬러 지정.
-            polyline.addPoint(MapPoint.mapPointWithGeoCoord(location.getLatitude(), location.getLongitude()));
-
-
-            // Polyline 지도에 올리기.
-            mapView.addPolyline(polyline);
-            // 지도뷰의 중심좌표와 줌레벨을 Polyline이 모두 나오도록 조정.
-            MapPointBounds mapPointBounds = new MapPointBounds(polyline.getMapPoints());
-            int padding = 100; // px
-            mapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds, padding));
-
-            Log.d("위치바뀜", String.valueOf(location.getLatitude()));
-            if (mLastlocation != null) {
-
-                /*폴리라인 그리기 */
-                MapPolyline polyline2 = new MapPolyline();
-                polyline.setLineColor(Color.argb(128, 255, 51, 0));
-                polyline.addPoint(MapPoint.mapPointWithGeoCoord(mLastlocation.getLatitude(), mLastlocation.getLongitude()));
-                mapView.addPolyline(polyline2);
-
-
-                // 지도뷰의 중심좌표와 줌레벨을 Polyline이 모두 나오도록 조정.
-                MapPointBounds mapPointBounds1 = new MapPointBounds(polyline.getMapPoints());
-
-                mapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds, padding));
-
-                Log.d("mLastlocation","mLastlocation");
-
-            }
-            mLastlocation = location;
-        }
-
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
-
-        public void onProviderEnabled(String provider) {
-        }
-
-        public void onProviderDisabled(String provider) {
-        }
-    };
 
     // 권한 체크 이후로직
     @Override
@@ -165,80 +101,75 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             }
 
             // 권한 체크에 동의를 하지 않으면 안드로이드 종료
-            if (check_result == true) {
-
-            } else {
+            if (check_result == false) {
                 finish();
             }
         }
     }
 
+        @Override
+        public void onCurrentLocationUpdate(MapView mapView, MapPoint mapPoint, float v) {
 
-    @Override
-    public void onCurrentLocationUpdate(MapView mapView, MapPoint mapPoint, float v) {
-        Log.d("위치","바뀜");
-        MapPoint.GeoCoordinate mapPointGeo = mapPoint.getMapPointGeoCoord();
-        Log.i("ㄴㅇㄻㅇㄴㄹㄴㅁ", String.format("MapView onCurrentLocationUpdate (%f,%f) accuracy (%f)", mapPointGeo.latitude, mapPointGeo.longitude ));
-    }
+        }
 
-    @Override
-    public void onCurrentLocationDeviceHeadingUpdate(MapView mapView, float v) {
-        Log.d("위치","바뀜");
-    }
+        @Override
+        public void onCurrentLocationDeviceHeadingUpdate(MapView mapView, float v) {
 
-    @Override
-    public void onCurrentLocationUpdateFailed(MapView mapView) {
+        }
 
-    }
+        @Override
+        public void onCurrentLocationUpdateFailed(MapView mapView) {
 
-    @Override
-    public void onCurrentLocationUpdateCancelled(MapView mapView) {
+        }
 
-    }
+        @Override
+        public void onCurrentLocationUpdateCancelled(MapView mapView) {
 
-    @Override
-    public void onMapViewInitialized(MapView mapView) {
+        }
 
-    }
+        @Override
+        public void onMapViewInitialized(MapView mapView) {
 
-    @Override
-    public void onMapViewCenterPointMoved(MapView mapView, MapPoint mapPoint) {
+        }
 
-    }
+        @Override
+        public void onMapViewCenterPointMoved(MapView mapView, MapPoint mapPoint) {
 
-    @Override
-    public void onMapViewZoomLevelChanged(MapView mapView, int i) {
+        }
 
-    }
+        @Override
+        public void onMapViewZoomLevelChanged(MapView mapView, int i) {
 
-    @Override
-    public void onMapViewSingleTapped(MapView mapView, MapPoint mapPoint) {
+        }
 
-    }
+        @Override
+        public void onMapViewSingleTapped(MapView mapView, MapPoint mapPoint) {
 
-    @Override
-    public void onMapViewDoubleTapped(MapView mapView, MapPoint mapPoint) {
+        }
 
-    }
+        @Override
+        public void onMapViewDoubleTapped(MapView mapView, MapPoint mapPoint) {
 
-    @Override
-    public void onMapViewLongPressed(MapView mapView, MapPoint mapPoint) {
+        }
 
-    }
+        @Override
+        public void onMapViewLongPressed(MapView mapView, MapPoint mapPoint) {
 
-    @Override
-    public void onMapViewDragStarted(MapView mapView, MapPoint mapPoint) {
+        }
 
-    }
+        @Override
+        public void onMapViewDragStarted(MapView mapView, MapPoint mapPoint) {
 
-    @Override
-    public void onMapViewDragEnded(MapView mapView, MapPoint mapPoint) {
+        }
 
-    }
+        @Override
+        public void onMapViewDragEnded(MapView mapView, MapPoint mapPoint) {
 
-    @Override
-    public void onMapViewMoveFinished(MapView mapView, MapPoint mapPoint) {
+        }
 
-    }
+        @Override
+        public void onMapViewMoveFinished(MapView mapView, MapPoint mapPoint) {
+
+        }
 
 }
