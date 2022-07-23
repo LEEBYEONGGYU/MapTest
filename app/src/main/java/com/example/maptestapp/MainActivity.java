@@ -33,7 +33,7 @@ import java.security.NoSuchAlgorithmException;
 public class MainActivity extends AppCompatActivity implements MapView.CurrentLocationEventListener, MapView.MapViewEventListener {
     private MapView mapView;
     private ViewGroup mapViewContainer;
-    private Location mLastlocation = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,13 +54,13 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
         // 권한ID를 가져옵니다
         int permission = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION);
+                Manifest.permission.INTERNET);
 
         int permission2 = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION);
+                Manifest.permission.ACCESS_FINE_LOCATION);
 
         int permission3 = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+                Manifest.permission.ACCESS_COARSE_LOCATION);
 
         // 권한이 열려있는지 확인
         if (permission == PackageManager.PERMISSION_DENIED || permission2 == PackageManager.PERMISSION_DENIED || permission3 == PackageManager.PERMISSION_DENIED) {
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             if (VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 // 권한 체크(READ_PHONE_STATE의 requestCode를 1000으로 세팅
                 requestPermissions(
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION},
+                        new String[]{Manifest.permission.INTERNET, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
                         1000);
             }
             return;
