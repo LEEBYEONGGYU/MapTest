@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.ViewGroup;
 
 import net.daum.mf.map.api.CameraUpdateFactory;
+import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapPointBounds;
 import net.daum.mf.map.api.MapPolyline;
@@ -81,6 +82,37 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         mapViewContainer.addView(mapView);
         mapView.setMapViewEventListener(this);
         mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
+
+
+        /* 마커를 표시하자 */
+        MapPOIItem customMarker = new MapPOIItem();
+        MapPoint mapPoint= MapPoint.mapPointWithGeoCoord(37.480426, 126.900177); //마커 표시할 위도경도
+        customMarker.setItemName("우리집 근처당");
+        customMarker.setTag(1);
+        customMarker.setMapPoint(mapPoint);
+        customMarker.setMarkerType(MapPOIItem.MarkerType.CustomImage); // 마커타입을 커스텀 마커로 지정.
+        customMarker.setCustomImageResourceId(R.drawable.custom_marker_red); // 마커 이미지.
+        customMarker.setCustomImageAutoscale(false); // hdpi, xhdpi 등 안드로이드 플랫폼의 스케일을 사용할 경우 지도 라이브러리의 스케일 기능을 꺼줌.
+        customMarker.setCustomImageAnchor(0.5f, 1.0f); // 마커 이미지중 기준이 되는 위치(앵커포인트) 지정 - 마커 이미지 좌측 상단 기준 x(0.0f ~ 1.0f), y(0.0f ~ 1.0f) 값.
+        mapView.addPOIItem(customMarker);
+
+        /* 폴리라인을 그리자 */
+        MapPolyline polyline = new MapPolyline();
+        polyline.setTag(1000);
+        polyline.setLineColor(Color.argb(128, 255, 51, 0)); // Polyline 컬러 지정.
+
+        // Polyline 좌표 지정.
+        polyline.addPoint(MapPoint.mapPointWithGeoCoord(37.479928, 126.900169));
+        polyline.addPoint(MapPoint.mapPointWithGeoCoord(37.480624,126.900735));
+        polyline.addPoint(MapPoint.mapPointWithGeoCoord(37.481667,126.900713));
+
+        // Polyline 지도에 올리기.
+        mapView.addPolyline(polyline);
+
+        // 지도뷰의 중심좌표와 줌레벨을 Polyline이 모두 나오도록 조정.
+        MapPointBounds mapPointBounds = new MapPointBounds(polyline.getMapPoints());
+        int padding = 100; // px
+        mapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds, padding));
 
     }
 
